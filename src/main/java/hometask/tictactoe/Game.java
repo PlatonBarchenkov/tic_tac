@@ -244,8 +244,4 @@ public class Game {
         }
         return false;
     }
-
-    public Game mergeFromLogs(Move[] logA, Move[] logB) {
-        return null;
-    }
 }

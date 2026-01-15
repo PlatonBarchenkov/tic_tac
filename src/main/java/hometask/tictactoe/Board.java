@@ -44,7 +44,7 @@ public class Board {
 
     public boolean place(int row, int col, Mark mark) {
         if (mark != null) {
-            if (row < 0 || row >= board.length || col < 0 || col >= board[0].length) {
+            if (!(row < 0 || row >= board.length || col < 0 || col >= board[0].length)) {
                 if (board[row][col] == Mark.EMPTY) {
                     board[row][col] = mark;
                     return true;
@@ -55,8 +55,10 @@ public class Board {
     }
 
     public void clear(int row, int col) {
+        if (row < 0 || row >= board.length || col < 0 || col >= board[0].length) return;
         board[row][col] = Mark.EMPTY;
     }
+
 
     public boolean full() {
         int fl = 1;
