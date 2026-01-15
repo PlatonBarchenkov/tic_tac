@@ -41,7 +41,7 @@ public class Game {
         return moveHistory;
     }
 
-    boolean wonHorizon(Mark mark) {
+    public boolean wonHorizon(Mark mark) {
         int countMark = 0;
         for (int row = 0; row < board.size(); row++) {
             for (int col = 0; col < board.size(); col++) {
@@ -64,7 +64,7 @@ public class Game {
         return false;
     }
 
-    boolean wonVertical(Mark mark) {
+    public boolean wonVertical(Mark mark) {
         int countMark = 0;
         for (int row = 0; row < board.size(); row++) {
             for (int col = 0; col < board.size(); col++) {
@@ -87,7 +87,7 @@ public class Game {
         return false;
     }
 
-    boolean wonDiagRight(Mark mark) {
+    public boolean wonDiagRight(Mark mark) {
         int countMark = 0;
         for (int row = 0; row < board.size(); row++) {
             for (int col = 0; col < board.size(); col++) {
@@ -110,7 +110,7 @@ public class Game {
         return false;
     }
 
-    boolean wonDiagLeft(Mark mark) {
+    public boolean wonDiagLeft(Mark mark) {
         int countMark = 0;
         for (int row = 0; row < board.size(); row++) {
             for (int col = 0; col < board.size(); col++) {
@@ -133,12 +133,12 @@ public class Game {
         return false;
     }
 
-    boolean won(Mark mark) {
+    public boolean won(Mark mark) {
         return (wonHorizon(mark) || wonVertical(mark) || wonDiagRight(mark) || wonDiagLeft(mark));
     }
 
 
-    GameState state() {
+    public GameState state() {
         if (moveCount % 2 == 0) {
             if (won(Mark.O)) {
                 return GameState.O_WON;
@@ -164,7 +164,7 @@ public class Game {
         return (moveCount % 2 == 0) ? GameState.X_TURN : GameState.O_TURN;
     }
 
-    boolean apply(Move move) {
+    public boolean apply(Move move) {
         gameState = state();
         if (move.col() < board.size() && move.col() >= 0 && move.row() >= 0 && move.row() < board.size() && (move.mark() == Mark.O || move.mark() == Mark.X)) {
             if ((moveCount % 2 == 0 && move.mark() == Mark.X) || (moveCount % 2 == 1 && move.mark() == Mark.O)) {
@@ -194,7 +194,7 @@ public class Game {
         return new Move[0];
     }
 
-    boolean undoLast() {
+    public boolean undoLast() {
         if (moveHistory.length != 0) {
             board.clear(moveHistory[moveHistory.length - 1].row(), moveHistory[moveHistory.length - 1].col());
             moveHistory = Arrays.copyOf(moveHistory, moveHistory.length - 1);
