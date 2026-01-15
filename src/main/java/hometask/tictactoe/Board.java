@@ -3,7 +3,6 @@ package hometask.tictactoe;
 import java.util.Arrays;
 
 
-
 public class Board {
     private static final int DEFAULT_SIZE = 3;
 
@@ -44,9 +43,13 @@ public class Board {
     }
 
     public boolean place(int row, int col, Mark mark) {
-        if (board[row][col] == Mark.EMPTY && row < board.length && col < board[0].length) {
-            board[row][col] = mark;
-            return true;
+        if (mark != null) {
+            if (row < 0 || row >= board.length || col < 0 || col >= board[0].length) {
+                if (board[row][col] == Mark.EMPTY) {
+                    board[row][col] = mark;
+                    return true;
+                }
+            }
         }
         return false;
     }

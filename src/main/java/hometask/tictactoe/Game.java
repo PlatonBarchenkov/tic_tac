@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 public class Game {
     Board board;
-    private final int winLen;
+    int winLen;
     Move[] moveHistory;
     int moveCount;
     GameState gameState;
@@ -20,7 +20,7 @@ public class Game {
     Game(int size, int winLength) {
         winLen = winLength;
         board = new Board(size);
-        moveHistory = new Move[size * size];
+        moveHistory = new Move[0];
         moveCount = 0;
         gameState = GameState.X_TURN;
     }
@@ -29,7 +29,7 @@ public class Game {
         winLen = other.winLen;
         board = new Board(other.board);
         moveHistory = Arrays.copyOf(other.moveHistory, other.moveHistory.length);
-        moveCount = 0;
+        moveCount = other.moveCount;
         gameState = other.gameState;
     }
 
@@ -117,7 +117,7 @@ public class Game {
                 if (board.board[row][col] == mark) {
                     countMark = 1;
                     for (int len = 1; len < winLen + 1; len++) {
-                        if (row + len < board.size() && row + len >= 0 && col + len < board.size() && col + len >= 0) {
+                        if (row + len < board.size() && row + len >= 0 && col - len < board.size() && col - len >= 0) {
                             if (board.board[row + len][col - len] != mark) {
                                 break;
                             }
@@ -184,14 +184,54 @@ public class Game {
 
     public Move[] lastWinningLine() {
         Move[] moveWon = new Move[winLen];
-        if (state() == GameState.O_WON || state() == GameState.X_WON) {
-            for (int i = 0; i < moveHistory.length; i++) {
-                for (int j = i + 1; j < winLen; j++) {
-                    if (moveHistory[j].mark() == Mark.X && state() == GameState.X_WON) {}
+        GameState state = state();
+        Mark winner = null;
+        int[] winLine = new int[4];
+        if (state != GameState.O_WON && state != GameState.X_WON) {
+            return new Move[0];
+        }
+        if (state == GameState.O_WON) {
+            winLine = lastWinningLine(Mark.O);
+            winner = Mark.O;
+        } else if (state == GameState.X_WON) {
+            winLine = lastWinningLine(Mark.X);
+            winner = Mark.X;
+        }
+        if (winLine != null && winner != null) {
+            for (int len = 0; len < winLen; len++) {
+                moveWon[len] = new Move(winLine[0]+winLine[2]*len, winLine[1]+winLine[3]*len, winner);
+            }
+        } else {
+            return new Move[0];
+        }
+        return moveWon;
+    }
+
+    private int[] lastWinningLine(Mark mark) {
+        int[][] vectorWin = {{0, 1}, {1, 0}, {1, 1}, {1, -1}};
+        for (int row = 0; row < board.size(); row++) {
+            for (int col = 0; col < board.size(); col++) {
+                if (board.board[row][col] == mark) {
+                    for (int[] v : vectorWin) {
+                        if (hasWinningLine(row, col, v[0], v[1], mark)) {
+                            return new int[]{row, col, v[0], v[1]};
+                        }
+                    }
                 }
             }
         }
-        return new Move[0];
+        return null;
+    }
+
+
+    private boolean hasWinningLine(int row, int col, int coefFirst, int coefSecond, Mark mark) {
+        for (int len = 1; len < winLen; len++) {
+            if (row + coefFirst * len>= board.size() || col + coefSecond * len >= board.size() || row + coefFirst * len< 0 || col + coefSecond * len< 0) {return  false;}
+            if (board.board[row + coefFirst * len][col + coefSecond * len] != mark) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public boolean undoLast() {
